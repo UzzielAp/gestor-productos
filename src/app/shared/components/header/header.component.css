@@ -1,0 +1,48 @@
+.header {
+    width: 100%;
+    background-color: #212121;
+    padding: 15px 0;
+    position: relative;
+    width: 100%;
+}
+  
+.toolbar {
+    display: flex;
+    align-items: center;
+    background-color: #212121;
+    color: white;
+    padding: 8px 16px;
+}
+  
+.container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+  
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+  
+.logo-img {
+    width: 32px;
+    height: 32px;
+    margin-right: 10px;
+}
+  
+.logo-text {
+    font-size: 18px;
+}
+  
+.spacer {
+    flex-grow: 1;
+}
+  
+.active-link {
+    font-weight: bold;
+}
+  

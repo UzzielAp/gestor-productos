@@ -1,0 +1,37 @@
+<app-header [title]="editingProduct ? 'Editar Producto' : 'Agregar Producto'"></app-header>
+
+<body>
+    <div class="card">
+        <h2>{{ editingProduct ? 'Editar Producto' : 'Agregar Producto' }}</h2>
+        <div class="card-body">
+            <form [formGroup]="productForm" (ngSubmit)="submit()">
+                <div>
+                    <label>Nombre:</label>
+                    <input type="text" class="form-control" formControlName="name" placeholder="Ingrese el nombre">
+                    <div class="alert alert-danger mt-3" [hidden]="name.valid || name.pristine">
+                        El nombre es requerido
+                    </div>
+                </div>
+                <div>
+                    <label>Precio:</label>
+                    <input type="number" class="form-control" formControlName="price" placeholder="Ingrese el precio">
+                    <div class="alert alert-danger mt-3" [hidden]="price.valid || price.pristine">
+                        El precio es requerido
+                    </div>
+                </div>
+                <div>
+                    <label>Descripción:</label>
+                    <textarea class="form-control" formControlName="descripcion" placeholder="Ingrese una descripción"></textarea>   
+                    <div class="alert alert-danger mt-3" [hidden]="descripcion.valid || descripcion.pristine">
+                        La descripción es requerida
+                    </div>
+                </div>
+
+                <div>
+                    <button mat-flat-button type="submit" [disabled]="productForm.invalid">Guardar</button>
+                    <button mat-flat-button type="button" (click)="onCancel()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
