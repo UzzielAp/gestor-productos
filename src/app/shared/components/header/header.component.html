@@ -7,7 +7,7 @@
       </button>
 
       <mat-menu #menu="matMenu">
-        <button mat-menu-item routerLink="/" routerLinkActive="active-link">
+        <button mat-menu-item routerLink="/home" routerLinkActive="active-link">
           <mat-icon>home</mat-icon> Inicio
         </button>
         <button mat-menu-item routerLink="/products" routerLinkActive="active-link">
@@ -15,12 +15,16 @@
         </button>
       </mat-menu>
 
-      <a routerLink="/" class="logo">
+      <a class="logo">
         <img src="https://cdn-icons-png.flaticon.com/512/4440/4440254.png" alt="Logo" class="logo-img">
         <span class="logo-text">| Gestión Tienda | {{title}}</span>
       </a>
 
       <span class="spacer"></span>
+
+      <button mat-button (click)="logout()">
+        <mat-icon>logout</mat-icon> Cerrar Sesión
+      </button>
     </div>
   </mat-toolbar>
 </header>

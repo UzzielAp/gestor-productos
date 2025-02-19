@@ -7,11 +7,16 @@ import { MatToolbarModule} from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { TableInventarioComponent } from './components/table-inventario/table-inventario.component';
+import { MatButtonToggle } from '@angular/material/button-toggle';
+import { MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   declarations: [
     FooterComponent,
-    HeaderComponent
+    HeaderComponent,
+    TableInventarioComponent,
   ],
   imports: [
     CommonModule,
@@ -19,11 +24,15 @@ import { MatButtonModule } from '@angular/material/button';
     MatToolbarModule,
     MatMenuModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatButtonToggle, 
+    MatButtonToggleGroup, 
+    MatTableModule
   ],
   exports: [
     FooterComponent,
-    HeaderComponent
+    HeaderComponent,
+    TableInventarioComponent,
   ]
 })
 export class SharedModule { }

@@ -4,9 +4,10 @@ import { ProductService } from './product.service';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
   standalone: false,
-  styleUrl: './app.component.css'
+
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   title = 'gestor-productos';
@@ -17,11 +18,26 @@ export class AppComponent {
 
   onSave(product: Product) {
     if (this.editingProduct) {
-      this.productService.updateProduct(product);
+      this.productService.updateProduct(product).subscribe({
+        next: () => {
+          console.log('Producto actualizado');
+          this.editingProduct = null;
+        },
+        error: (err) => {
+          console.error('Error al actualizar producto:', err);
+        }
+      });
     } else {
-      this.productService.addProduct(product);
+      this.productService.addProduct(product).subscribe({
+        next: () => {
+          console.log('Producto agregado');
+          this.editingProduct = null;
+        },
+        error: (err) => {
+          console.error('Error al agregar producto:', err);
+        }
+      });
     }
-    this.editingProduct = null;
   }
 
   onCancel() {

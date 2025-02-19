@@ -1,50 +1,33 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Product } from './models/product.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-  private products: Product[] = [];
+  private apiUrl = 'http://localhost:3000/gestor/products'; 
 
-  constructor() {
-    this.loadProducts(); 
+  constructor(private http: HttpClient) {}
+
+  getProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(this.apiUrl);
   }
 
-  private loadProducts() {
-    const storedProducts = localStorage.getItem('products');
-    this.products = storedProducts ? JSON.parse(storedProducts) : [];
+  addProduct(product: Product): Observable<void> {
+    return this.http.post<void>(this.apiUrl, product);
   }
 
-  private saveProducts() {
-    localStorage.setItem('products', JSON.stringify(this.products));
+  getProductById(id: number): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/${id}`);
   }
 
-  getProducts() {
-    return this.products;
+  updateProduct(product: Product): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${product.id}`, product);
   }
 
-  addProduct(product: Product) {
-    product.id = this.products.length > 0 ? Math.max(...this.products.map(p => p.id)) + 1 : 1; 
-    this.products.push(product);
-    this.saveProducts();
-  }
-
-  getProductById(id: number) {
-    return this.products.find(p => p.id === id);
-  }
-
-  updateProduct(updateProduct: Product) {
-    const index = this.products.findIndex(p => p.id === updateProduct.id);
-    if (index !== -1) {
-      this.products[index] = updateProduct;
-      this.saveProducts(); 
-    }
-  }
-
-  deleteProduct(id: number) {
-    this.products = this.products.filter(p => p.id !== id);
-    this.saveProducts(); 
+  deleteProduct(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
-

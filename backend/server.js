@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const sql = require('mssql');
+const mysql = require('mysql2');
 const cors = require('cors');
 
 const app = express();
@@ -10,64 +10,80 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const dbConfig = {
-  user: 'your_username',
-  password: 'your_password',
-  server: 'localhost',
-  database: 'your_database',
-  options: {
-    encrypt: true, // Use this if you're on Windows Azure
-    trustServerCertificate: true // Change to true for local dev / self-signed certs
-  }
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'GestorProductos',
+  port: 3306
 };
 
-sql.connect(dbConfig, err => {
+const connection = mysql.createConnection(dbConfig);
+
+connection.connect(err => {
   if (err) {
-    console.error('Database connection failed:', err);
+    console.error('Error en la conexión con la base de datos:', err);
     return;
   }
-  console.log('Connected to SQL Server');
+  console.log('Conectado a MySQL');
 });
 
-app.get('/products', async (req, res) => {
-  try {
-    const result = await sql.query`SELECT * FROM Products`;
-    res.json(result.recordset);
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
+app.get('/products', (req, res) => {
+  connection.query('SELECT * FROM Products', (err, result) => {
+    if (err) {
+      return res.status(500).send(err.message);
+    }
+    res.json(result);
+  });
 });
 
-app.post('/products', async (req, res) => {
+app.get('/products/:id', (req, res) => {
+  const productId = req.params.id;
+  const query = 'SELECT * FROM Products WHERE id = ?';
+  connection.query(query, [productId], (err, result) => {
+    if (err) {
+      return res.status(500).send(err.message);
+    }
+    if (result.length === 0) {
+      return res.status(404).send('Producto no encontrado');
+    }
+    res.json(result[0]);
+  });
+});
+
+app.post('/products', (req, res) => {
   const { name, price, descripcion } = req.body;
-  try {
-    await sql.query`INSERT INTO Products (name, price, descripcion) VALUES (${name}, ${price}, ${descripcion})`;
-    res.status(201).send('Product added');
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
+  const query = 'INSERT INTO Products (name, price, descripcion) VALUES (?, ?, ?)';
+  connection.query(query, [name, price, descripcion], (err, result) => {
+    if (err) {
+      return res.status(500).send(err.message);
+    }
+    res.status(201).json({ message: 'Product added', id: result.insertId });
+  });
 });
 
-app.put('/products/:id', async (req, res) => {
+app.put('/products/:id', (req, res) => {
   const { id } = req.params;
   const { name, price, descripcion } = req.body;
-  try {
-    await sql.query`UPDATE Products SET name = ${name}, price = ${price}, descripcion = ${descripcion} WHERE id = ${id}`;
-    res.send('Product updated');
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
+  const query = 'UPDATE Products SET name = ?, price = ?, descripcion = ? WHERE id = ?';
+  connection.query(query, [name, price, descripcion, id], (err) => {
+    if (err) {
+      return res.status(500).send(err.message);
+    }
+    res.json({ message: 'Product updated' });
+  });
 });
 
-app.delete('/products/:id', async (req, res) => {
+app.delete('/products/:id', (req, res) => {
   const { id } = req.params;
-  try {
-    await sql.query`DELETE FROM Products WHERE id = ${id}`;
-    res.send('Product deleted');
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
+  const query = 'DELETE FROM Products WHERE id = ?';
+  connection.query(query, [id], (err) => {
+    if (err) {
+      return res.status(500).send(err.message);
+    }
+    res.json({ message: 'Product deleted' });
+  });
 });
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`Servidor funcionando en http://localhost:${port}`);
 });

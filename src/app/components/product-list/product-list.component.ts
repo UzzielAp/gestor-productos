@@ -2,28 +2,29 @@ import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../product.service';
 import { Product } from '../../models/product.model';
 import { Router } from '@angular/router';
-import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-product-list',
   standalone: false,
-
+  
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'price', 'descripcion', 'actions'];
-  dataSource = new MatTableDataSource<Product>();
+  products: Product[] = [];
 
   constructor(private productService: ProductService, private router: Router) {}
 
   ngOnInit() {
-    this.dataSource.data = this.productService.getProducts();
+    this.productService.getProducts().subscribe(products => {
+      this.products = products;
+    });
   }
 
   deleteProduct(id: number) {
-    this.productService.deleteProduct(id);
-    this.dataSource.data = this.productService.getProducts();
+    this.productService.deleteProduct(id).subscribe(() => {
+      this.products = this.products.filter((product) => product.id !== id);
+    });
   }
 
   navigateToAdd() {
